@@ -19,6 +19,8 @@ class Vocab:
         counter = Counter()
         f = open(self.corpus_pth, "r", encoding="utf-8")
         for i in f:
+            if not i.strip():
+                continue
             word_lst = i.strip().split()
             for word in word_lst:
                 counter[word] += 1
@@ -58,19 +60,10 @@ class Sentence:
 
     def to_tokens(self):
         for word in self.sentence.split():
-            if len(self.tokens) > self.max_len:
-                break
-            if word == self.split_word:
-                self.tokens.append(self.word_to_ix[self.split_word])
-                continue
             if word not in self.word_to_ix:
                 self.tokens.append(self.word_to_ix[self.unk_token])
                 continue
             self.tokens.append(self.word_to_ix[word])
-
-        if len(self.tokens) < self.max_len:
-            for _ in range(self.max_len - len(self.tokens)):
-                self.tokens.append(self.word_to_ix[self.pad_token])
 
     def from_tokens(self):
         sentence = ""
@@ -80,56 +73,32 @@ class Sentence:
 
 
 class Document:
-    def __init__(self):
-        pass
+    def __init__(self, doc, vocab_obj):
+        self.sentence_lst = [i for i in doc.split("\n") if i]
+        self.vocab_obj = vocab_obj
+        self.doc_tokens = []
+
+    def change_to_token(self):
+        for line in self.sentence_lst:
+            sentence_obj = Sentence(line, self.vocab_obj)
+            sentence_obj.to_tokens()
+            self.doc_tokens.append(sentence_obj.tokens)
+
 
 if __name__ == '__main__':
     corpus_path = r"data/corpus.small"
 
     vocab = Vocab(corpus_path, min_freq=1)
     vocab.build_vocab()
-    # vocab.save_vocab()
-    print(vocab.word_to_ix)
-    print(vocab.id_to_word)
     with open(corpus_path, "r", encoding="utf-8") as f:
+        doc = ""
         for i in f:
-            sen = i.strip()
-            print(sen)
-            sentence = Sentence(sen, vocab)
-            sentence.to_tokens()
-            print(sentence.tokens)
-
-
-
-
-
-#     corpus_path = r"data/corpus.small"
-#     output_path = r"data/vocab.small"
-#     encoding = "utf-8"
-#     min_freq = 1
-#     with open(corpus_path, "r", encoding=encoding) as f:
-#         vocab = WordVocab(f, min_freq=min_freq)
-#     vocab.save_vocab(output_path)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            doc += i
+            if i == "\n":
+                document = Document(doc, vocab)
+                document.change_to_token()
+                print(document.doc_tokens)
+                doc = ""
+        document = Document(doc, vocab)
+        document.change_to_token()
+        print(document.doc_tokens)

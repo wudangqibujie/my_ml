@@ -123,3 +123,6 @@ class BERTDataset(Dataset):
                 self.random_file.__next__()
             line = self.random_file.__next__()
         return line[:-1].split("\t")[1]
+
+
+# 192.168.0.102
