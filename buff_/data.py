@@ -23,21 +23,24 @@
 # # for _ in range(100):
 # #     # print(next(f))
 # #     print(f.__next__())
+from transformers import BertTokenizer
 
 import random
-
 class Sentence:
     def __init__(self, line):
         self.line = line
 
 
 class Doc:
-    def __init__(self, doc, neg_sent_sample_num=2, max_mask_num=20):
+    def __init__(self, doc, neg_sent_sample_num_rt=1., max_mask_num=20):
         self.doc = doc
         self.sentence_text = self.doc.split("\n")
         self.line_num = len(self.sentence_text)
-        self.neg_sent_num = neg_sent_sample_num
+        self.neg_sent_num_rt = neg_sent_sample_num_rt
         self.max_mask_num = max_mask_num
+
+    def create_mask_sentence(self, tokens):
+        pass
 
     def create_dataset(self):
         # *** Example ***
@@ -49,9 +52,19 @@ class Doc:
         # masked_lm_ids: 1010 1005 1055 2594 27528 2062 25499 2387 2009 2087 1011 24071 3565 20771 0 0 0 0 0 0
         # masked_lm_weights: 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0
         # next_sentence_labels: 0
+        datasets = []
+        for ix in range(len(self.sentence_text) - 1):
+            pass
 
-    def random_neg_sent(self):
+
+
+
+
+
+
+    def random_neg_sent(self, sentence_id):
         pass
+
 
 
 class FileDataset:
