@@ -27,7 +27,7 @@ class Instances:
         self.rng.shuffle(all_doc)
         f.close()
 
-    
+
 
 
 
